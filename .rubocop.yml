@@ -1,0 +1,61 @@
+require:
+  - rubocop-rails
+  - rubocop-performance
+  - rubocop-rspec
+  - rubocop-gitlab-security
+
+AllCops:
+  Exclude:
+    - "**/assets/**/*"
+    - "**/javascript/**/*"
+    - "**/views/**/*"
+    - "**/bin/**/*"
+    - "**/coverage/**/*"
+    - "**/db/migrate/*"
+    - "**/db/**/schema.rb"
+    - "**/log/**/*"
+    - "**/public/**/*"
+    - "**/storage/**/*"
+    - "**/script/**/*"
+    - "**/vendor/**/*"
+    - "**/tmp/**/*"
+    - "**/node_modules/**/*"
+  ExtraDetails: true
+  TargetRubyVersion: 3.1.4
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - config/routes.rb
+
+# NewCops
+Lint/RaiseException:
+  Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
+Style/HashEachMethods:
+  Enabled: true
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashTransformValues:
+  Enabled: true
+
+# Style
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always_true
+
+Style/Documentation:
+  Enabled: false
+
+Style/ReturnNil:
+  Description: "Use return instead of return nil."
+  Enabled: true
+
+# Rspec
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*_spec.rb
+
+RSpec/MultipleExpectations:
+  Enabled: false

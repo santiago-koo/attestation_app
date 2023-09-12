@@ -1,0 +1,10 @@
+{
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "diffEditor.renderSideBySide": true,
+  "ruby.format": "rubocop",
+  "ruby.rubocop.executePath": "PATH",
+  "[ruby]": {
+    "editor.defaultFormatter": "misogi.ruby-rubocop"
+  }
+}
