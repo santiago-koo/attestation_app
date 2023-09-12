@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  include Rescuable
+
   skip_before_action :verify_authenticity_token
-  rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
   protected
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[name])
-    devise_parameter_sanitizer.permit(:account_update, keys: %i[name])
-  end
-
-  def resource_not_found
-    render json: { base: 'The requested resource was not found.' }, status: :not_found
+  def render_response(status_code:, message: '', data: {})
+    render json: {
+      status: { code: status_code, message: },
+      data:
+    }, status: status_code
   end
 
   def current_user

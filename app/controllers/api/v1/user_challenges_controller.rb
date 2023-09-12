@@ -7,15 +7,17 @@ module Api
       respond_to :json
 
       def index
-        render json: {
+        render_response(
+          status_code: :ok,
           data: { user_challenges: }
-        }, status: :ok
+        )
       end
 
       def show
-        render json: {
+        render_response(
+          status_code: :ok,
           data: { user_challenge: }
-        }, status: :ok
+        )
       end
 
       private

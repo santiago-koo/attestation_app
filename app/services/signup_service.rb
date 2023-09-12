@@ -9,12 +9,16 @@ class SignupService < ApplicationService
   end
 
   def call
-    user = User.new params
-    user.email = email.strip_downcase
+    user = User.new(email:, password:)
+    user.email = email.strip.downcase
     user.password = password.strip
 
     user.save!
 
-    return_message(true, user)
+    session = ::SigninService.call({ email:, password: })
+    user = session.payload[:user]
+    tokens = session.payload[:tokens]
+
+    return_message(true, { user:, tokens: })
   end
 end
