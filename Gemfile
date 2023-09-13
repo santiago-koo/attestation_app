@@ -38,7 +38,7 @@ gem 'jbuilder'
 gem 'bcrypt', '~> 3.1', '>= 3.1.19'
 gem 'devise'
 gem 'doorkeeper', '~> 5.6', '>= 5.6.6'
-# gem 'doorkeeper-jwt', '~> 0.4.1'
+gem 'swagger-blocks', '~> 3.0'
 gem 'webauthn', '~> 3.0'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

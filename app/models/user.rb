@@ -18,6 +18,8 @@
 #  password_digest        :string           not null
 #
 class User < ApplicationRecord
+  include Apidocs::Users
+
   has_secure_password
 
   has_many :user_challenges, dependent: :destroy

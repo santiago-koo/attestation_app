@@ -5,6 +5,11 @@ Rails.application.routes.draw do
     skip_controllers :authorizations, :applications, :authorized_applications, :token_info
   end
 
+  unless Rails.env.production?
+    resources :apidocs, only: [:index]
+    get '/api-docs', to: redirect('/apidocs/index.html')
+  end
+
   namespace :api do
     namespace :v1 do
       scope :sessions, controller: 'sessions' do

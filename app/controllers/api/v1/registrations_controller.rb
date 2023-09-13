@@ -3,6 +3,8 @@
 module Api
   module V1
     class RegistrationsController < ApplicationController
+      include Apidocs::Api::RegistrationsController
+
       respond_to :json
 
       def signup
