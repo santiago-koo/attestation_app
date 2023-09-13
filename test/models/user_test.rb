@@ -15,7 +15,7 @@
 #  last_sign_in_ip        :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  jti                    :string           not null
+#  password_digest        :string           not null
 #
 require "test_helper"
 
