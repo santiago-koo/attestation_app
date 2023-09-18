@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       end
       resources :user_challenges, only: %i[index show create]
       resources :payments, only: %i[create]
+      resources :attestations, only: %i[create]
     end
   end
 end
