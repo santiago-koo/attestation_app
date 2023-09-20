@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_11_162421) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_19_014146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,6 +56,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_162421) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
+  create_table "user_attestations", force: :cascade do |t|
+    t.bigint "user_challenge_id", null: false
+    t.string "receipt", null: false
+    t.string "public_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_challenge_id"], name: "index_user_attestations_on_user_challenge_id"
+  end
+
   create_table "user_challenges", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "token"
@@ -85,5 +94,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_162421) do
 
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "user_attestations", "user_challenges"
   add_foreign_key "user_challenges", "users"
 end

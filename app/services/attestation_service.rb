@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class AttestationService < ApplicationService
-  attr_reader :base64_attestation, :base64_key_id
+  attr_reader :base64_attestation, :base64_key_id, :user_challenge
 
   def initialize(params)
     @base64_attestation = params[:attestation]
     @base64_key_id = params[:keyID]
-    @current_user = params[:current_user]
+    @user_challenge = params[:user_challenge]
   end
 
   def call
@@ -20,15 +20,21 @@ class AttestationService < ApplicationService
   private
 
   def successful_attestation?
-    attestation_object.valid_attestation_statement?(client_data_hash) &&
-      attestation_object.valid_attested_credential? &&
+    steps_1_3_4_8_valid? &&
+      cred_cert_public_key_equals_key_id? &&
       app_id_equals_rp_id_hash? &&
       authenticator_data_sign_counter_equals_zero? &&
       attested_credential_data_id_equals_key_id?
   end
 
+  # "Store the Public Key and Receipt" step
+  # https://developer.apple.com/documentation/devicecheck/validating_apps_that_connect_to_your_server#3579385
   def create_user_attestation
-    # TODO
+    UserAttestation.create(
+      receipt: Base64.encode64(attestation_object.attestation_statement.send(:statement)['receipt']),
+      public_key: Base64.encode64(attestation_object.attestation_statement.attestation_certificate.public_key.to_der),
+      user_challenge_id: user_challenge.id
+    )
   end
 
   # Step number 9
@@ -49,11 +55,28 @@ class AttestationService < ApplicationService
     attestation_object.authenticator_data.rp_id_hash == ::Digest::SHA256.digest("#{ENV['IOS_TEAM_ID']}.#{ENV['IOS_BUNDLE_ID']}")
   end
 
+  # Step number  5
+  # https://developer.apple.com/documentation/devicecheck/validating_apps_that_connect_to_your_server#3576643
+  def cred_cert_public_key_equals_key_id?
+    public_key = attestation_object.attestation_statement.attestation_certificate.public_key
+    public_key_asn1_sequence = OpenSSL::ASN1.decode(public_key.to_der)
+    sequence_value = public_key_asn1_sequence.find { |pkas| pkas.value.is_a? String }
+
+    return false if sequence_value.nil?
+
+    Digest::SHA256.digest(sequence_value.value) == Base64.decode64(base64_key_id)
+  end
+
   # Step number 2
   # https://developer.apple.com/documentation/devicecheck/validating_apps_that_connect_to_your_server#3576643
   def client_data_hash
-    # TODO: Query UserChallenge
-    ::Digest::SHA256.digest('41b72ded90bb49219a5ba949349ed3a49618d728d58aa9508563930318c8e858')
+    ::Digest::SHA256.digest(user_challenge.token)
+  end
+
+  # Step number 1, 3, 4 and 8
+  # https://developer.apple.com/documentation/devicecheck/validating_apps_that_connect_to_your_server#3576643
+  def steps_1_3_4_8_valid?
+    attestation_object.valid_attestation_statement?(client_data_hash)
   end
 
   def attestation_object

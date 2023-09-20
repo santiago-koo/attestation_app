@@ -21,9 +21,18 @@ module Api
         params.permit(:keyID, :attestation)
       end
 
+      def user_challenge_params
+        params.permit(:device_id, :challenge)
+      end
+
+      def user_challenge
+        @user_challenge ||=
+          UserChallenge.where(user_id: current_user.id, device_id: user_challenge_params[:device_id]).last
+      end
+
       def attestation_service_result
         @attestation_service_result ||=
-          ::AttestationService.call(attestation_params.merge(current_user:))
+          ::AttestationService.call(attestation_params.merge(user_challenge:))
       end
     end
   end

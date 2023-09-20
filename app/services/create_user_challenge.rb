@@ -9,10 +9,12 @@ class CreateUserChallenge < ApplicationService
   end
 
   def call
-    return_message(false, { msessage: 'Resource not created' }) unless new_user_challenge.valid?
-
-    new_user_challenge.save
-    return_message(true, new_user_challenge)
+    if new_user_challenge.valid?
+      new_user_challenge.save
+      return_message(true, new_user_challenge)
+    else
+      return_message(false, { msessage: 'Resource not created' })
+    end
   end
 
   private
