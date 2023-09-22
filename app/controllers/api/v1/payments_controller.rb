@@ -22,7 +22,7 @@ module Api
       private
 
       def assertation_service_result
-        @assertation_service_result ||= ::AssertationService.call(payment_params.merge(current_user:))
+        @assertation_service_result ||= ::Apple::AssertationService.call(payment_params.merge(current_user:))
       end
 
       def payment_params

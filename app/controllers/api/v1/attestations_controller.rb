@@ -40,7 +40,7 @@ module Api
 
       def attestation_service_result
         @attestation_service_result ||=
-          ::AttestationService.call(attestation_params.merge(user_challenge:))
+          ::Apple::AttestationService.call(attestation_params.merge(user_challenge:))
       end
     end
   end
