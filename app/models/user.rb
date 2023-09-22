@@ -16,6 +16,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  password_digest        :string           not null
+#  is_attested            :boolean          default(FALSE), not null
 #
 class User < ApplicationRecord
   include Apidocs::Users
@@ -41,9 +42,13 @@ class User < ApplicationRecord
     oauth_access_tokens.where(application_id: nil).delete_all
   end
 
+  def user_attestation
+    user_challenges.where(is_active: false).last.user_attestation
+  end
+
   def token_values(doorkeeper_tokens)
     {
-      token: doorkeeper_tokens.token,
+      access_token: doorkeeper_tokens.token,
       refresh_token: doorkeeper_tokens.refresh_token,
       expires_in: doorkeeper_tokens.expires_in_seconds,
       created_at: doorkeeper_tokens.created_at.to_i

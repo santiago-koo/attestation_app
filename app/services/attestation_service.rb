@@ -10,7 +10,12 @@ class AttestationService < ApplicationService
   end
 
   def call
+    return return_message(true, { user_attestation: user_challenge.user_attestation }) if user_already_attested?
+
     if successful_attestation?
+      user.update(is_attested: true)
+      user_challenge.update(is_active: false)
+
       return_message(true, { user_attestation: create_user_attestation })
     else
       return_message(false, { msessage: 'Attestation process has failed' })
@@ -18,6 +23,10 @@ class AttestationService < ApplicationService
   end
 
   private
+
+  def user_already_attested?
+    user.is_attested?
+  end
 
   def successful_attestation?
     steps_1_3_4_8_valid? &&
@@ -93,5 +102,9 @@ class AttestationService < ApplicationService
 
   def relying_party
     WebAuthn::RelyingParty.new(encoding: 'base64', origin: 'localhost:3000', name: 'WebAuthn Rails Demo App')
+  end
+
+  def user
+    @user ||= user_challenge.user
   end
 end

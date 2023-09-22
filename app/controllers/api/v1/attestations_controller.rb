@@ -3,6 +3,8 @@
 module Api
   module V1
     class AttestationsController < ApplicationController
+      before_action :doorkeeper_authorize!
+
       def create
         if attestation_service_result.success?
           render_response(
@@ -11,7 +13,10 @@ module Api
             data: attestation_service_result.payload
           )
         else
-          render_response(status_code: :forbidden, message: 'Could not sign up')
+          render_response(
+            status_code: :forbidden,
+            message: attestation_service_result.payload[:message]
+          )
         end
       end
 
@@ -22,12 +27,15 @@ module Api
       end
 
       def user_challenge_params
-        params.permit(:device_id, :challenge)
+        params.permit(:device_id)
       end
 
       def user_challenge
         @user_challenge ||=
-          UserChallenge.where(user_id: current_user.id, device_id: user_challenge_params[:device_id]).last
+          UserChallenge
+          .active
+          .where(user_id: current_user.id)
+          .last
       end
 
       def attestation_service_result

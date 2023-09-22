@@ -13,7 +13,8 @@ class SigninService < ApplicationService
   def call
     raise InvalidCredentialsError if user.blank?
 
-    user.authenticate(password)
+    return return_message(false) unless user.authenticate(password)
+
     remove_reset_password_token
     user.save
 

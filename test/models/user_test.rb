@@ -16,6 +16,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  password_digest        :string           not null
+#  is_attested            :boolean          default(FALSE), not null
 #
 require "test_helper"
 

@@ -14,13 +14,13 @@ module Api
       end
 
       def create
-        service_result = ::CreateUserChallenge.call(user_challenge_params.merge(user: current_user))
+        service_result = ::HandleUserChallenge.call(user_challenge_params.merge(user: current_user))
 
-        unless service_result.success?
+        if service_result.success?
+          render_response(status_code: :created, data: { user_challenge: service_result.payload })
+        else
           render_response(status_code: :internal_server_error, message: service_result.payload[:mesage])
         end
-
-        render_response(status_code: :created, data: { user_challenge: service_result.payload })
       end
 
       def show

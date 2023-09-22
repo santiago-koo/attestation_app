@@ -13,4 +13,8 @@
 #
 class UserAttestation < ApplicationRecord
   belongs_to :user_challenge
+
+  def eliptic_curve_public_key
+    OpenSSL::PKey::EC.new(Base64.decode64(public_key))
+  end
 end

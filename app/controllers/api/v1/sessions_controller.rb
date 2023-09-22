@@ -7,32 +7,40 @@ module Api
       respond_to :json
 
       def signin
-        render_response(status_code: :forbidden, message: 'Could not sign in') unless signin_service_result.success?
-
-        render_response(
-          status_code: :ok,
-          message: 'Signed in successfully.',
-          data: signin_response_data
-        )
+        if signin_service_result.success?
+          render_response(
+            status_code: :ok,
+            message: 'Signed in successfully.',
+            data: signin_response_data
+          )
+        else
+          render_response(status_code: :forbidden, message: 'Could not sign in')
+        end
       end
 
       def signout
-        current_user.revoke_tokens!
-
-        render_response(status_code: :no_content)
+        if signout_service_result.success?
+          render_response(status_code: :no_content)
+        else
+          render_response(status_code: :forbidden, message: 'Could not sign out')
+        end
       end
 
       private
 
       def signin_response_data
-        user = signin_service_result.payload[:user]
-        tokens = signin_service_result.payload[:tokens].presence || 'Could not sign in'
-
-        { user:, tokens: }
+        {
+          user: signin_service_result.payload[:user],
+          tokens: signin_service_result.payload[:tokens].presence || 'Could not sign in'
+        }
       end
 
       def signin_service_result
         @signin_service_result ||= ::SigninService.call(signin_params)
+      end
+
+      def signout_service_result
+        ::SignoutService.call(current_user:)
       end
 
       def signin_params
