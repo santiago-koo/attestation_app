@@ -26,7 +26,7 @@ module Api
       end
 
       def payment_params
-        params.permit(:keyID, :assertation, :clientData)
+        params.require(:payment).permit(:keyID, :assertation, :clientData)
       end
     end
   end

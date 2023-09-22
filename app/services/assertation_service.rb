@@ -7,6 +7,7 @@ class AssertationService < ApplicationService
     @base64_client_data = params[:clientData]
     @base64_assertation = params[:assertation]
     @current_user = params[:current_user]
+    set_user_challenge_type
   end
 
   def call
@@ -84,10 +85,14 @@ class AssertationService < ApplicationService
   end
 
   def user_attestation
-    @user_attestation ||= current_user.user_attestation
+    @user_attestation ||= current_user.user_challenges.attestation.where(is_active: false).last.user_attestation
   end
 
   def assert_user_challenge
     @assert_user_challenge ||= current_user.user_challenges.active.last
+  end
+
+  def set_user_challenge_type
+    assert_user_challenge.assertion!
   end
 end

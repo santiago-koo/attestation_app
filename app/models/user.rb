@@ -42,10 +42,6 @@ class User < ApplicationRecord
     oauth_access_tokens.where(application_id: nil).delete_all
   end
 
-  def user_attestation
-    user_challenges.where(is_active: false).last.user_attestation
-  end
-
   def token_values(doorkeeper_tokens)
     {
       access_token: doorkeeper_tokens.token,

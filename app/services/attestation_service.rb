@@ -7,6 +7,7 @@ class AttestationService < ApplicationService
     @base64_attestation = params[:attestation]
     @base64_key_id = params[:keyID]
     @user_challenge = params[:user_challenge]
+    set_user_challenge_type
   end
 
   def call
@@ -106,5 +107,9 @@ class AttestationService < ApplicationService
 
   def user
     @user ||= user_challenge.user
+  end
+
+  def set_user_challenge_type
+    user_challenge.attestation!
   end
 end
