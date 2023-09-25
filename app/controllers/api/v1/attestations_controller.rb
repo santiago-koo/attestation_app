@@ -39,8 +39,13 @@ module Api
       end
 
       def attestation_service_result
-        @attestation_service_result ||=
-          ::Apple::AttestationService.call(attestation_params.merge(user_challenge:))
+        @attestation_service_result ||= attestation_class[request.headers['HTTP_DEVICE_OS']]
+      end
+
+      def attestation_class
+        {
+          'iOS' => ::Apple::AttestationService.call(attestation_params.merge(user_challenge:))
+        }
       end
     end
   end

@@ -3,6 +3,8 @@
 module Api
   module V1
     class PaymentsController < ApplicationController
+      include Assertionable
+
       before_action :doorkeeper_authorize!
 
       def create
@@ -17,16 +19,6 @@ module Api
             message: assertation_service_result.payload[:message]
           )
         end
-      end
-
-      private
-
-      def assertation_service_result
-        @assertation_service_result ||= ::Apple::AssertationService.call(payment_params.merge(current_user:))
-      end
-
-      def payment_params
-        params.require(:payment).permit(:keyID, :assertation, :clientData)
       end
     end
   end
