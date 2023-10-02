@@ -19,9 +19,10 @@ Rails.application.routes.draw do
       scope :registrations, controller: 'registrations' do
         post :signup
       end
-      resources :user_challenges, only: %i[index show create]
+      resources :user_challenges, only: %i[create]
       resources :payments, only: %i[create]
       resources :attestations, only: %i[create]
+      resources :check_devices, only: %i[create]
     end
   end
 end

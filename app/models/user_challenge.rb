@@ -13,7 +13,7 @@
 #  type_status :integer          default("empty")
 #
 class UserChallenge < ApplicationRecord
-  enum type_status: { empty: 0, attestation: 1, assertion: 2 }
+  enum type_status: { empty: 0, attestation: 1, assertion: 2, google_play_integrity: 3 }
 
   belongs_to :user
   has_one :user_attestation, dependent: :destroy

@@ -3,19 +3,9 @@
 module Api
   module V1
     class UserChallengesController < ApplicationController
-      before_action :doorkeeper_authorize!
       respond_to :json
 
-      def index
-        render_response(
-          status_code: :ok,
-          data: { user_challenges: }
-        )
-      end
-
       def create
-        service_result = ::HandleUserChallenge.call(user_challenge_params.merge(user: current_user))
-
         if service_result.success?
           render_response(status_code: :created, data: { user_challenge: service_result.payload })
         else
@@ -23,25 +13,22 @@ module Api
         end
       end
 
-      def show
-        render_response(
-          status_code: :ok,
-          data: { user_challenge: }
-        )
-      end
-
       private
 
-      def user_challenges
-        UserChallenge.where(params[:user_id])
+      def service_result
+        case request.headers['HTTP_DEVICE_OS']
+        when 'iOS'
+          ::Apple::UserChallengeService.call(apple_params)
+        when 'Android'
+          ::Android::ChallengeService.call
+        end
       end
 
-      def user_challenge
-        UserChallenge.find_by!(id: params[:id], user_id: current_user.id)
-      end
-
-      def user_challenge_params
-        params.require(:user_challenge).permit(:device_id)
+      def apple_params
+        {
+          device_id: request.headers['HTTP_DEVICE_ID'],
+          current_user:
+        }
       end
     end
   end

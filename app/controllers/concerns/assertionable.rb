@@ -5,7 +5,11 @@ module Assertionable
 
   included do
     def assertation_service_result
-      @assertation_service_result ||= assertion_class[request.headers['HTTP_DEVICE_OS']]
+      @assertation_service_result ||= assertion_class
+    end
+
+    def check_device_params
+      params.require(:check_device).permit(:token, :data, :challenge)
     end
 
     def assertion_params
@@ -13,9 +17,12 @@ module Assertionable
     end
 
     def assertion_class
-      {
-        'iOS' => ::Apple::AssertationService.call(assertion_params.merge(current_user:))
-      }
+      case request.headers['HTTP_DEVICE_OS']
+      when 'iOS'
+        ::Apple::AssertationService.call(assertion_params.merge(current_user:))
+      when 'Android'
+        ::Android::IntegrityService.call(check_device_params)
+      end
     end
   end
 end
