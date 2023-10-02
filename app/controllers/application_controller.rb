@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::Base
   include Rescuable
+  include Assertionable
 
   skip_before_action :verify_authenticity_token
 

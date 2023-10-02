@@ -2,6 +2,8 @@
 
 module Android
   class IntegrityService < ApplicationService
+    include VeredictPolicy
+
     attr_reader :integrity_token, :challenge, :data
 
     def initialize(params)
@@ -11,7 +13,7 @@ module Android
     end
 
     def call
-      if valid_nonce?
+      if nonce_valid?
         return_message(true, play_integrity_service_result)
       else
         return_message(false, { message: 'Nonce is not valid' })
@@ -21,12 +23,6 @@ module Android
     end
 
     private
-
-    def valid_nonce?
-      local_nonce = Base64.strict_encode64(challenge + Digest::SHA256.hexdigest(Base64.decode64(data)))
-
-      payload.request_details.nonce == local_nonce
-    end
 
     def play_integrity_service_result
       {

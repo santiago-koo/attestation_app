@@ -8,6 +8,6 @@ class ApplicationService
   end
 
   def return_message(success, payload = {})
-    OpenStruct.new(success?: success, payload: payload)
+    OpenStruct.new(success?: success, payload:)
   end
 end

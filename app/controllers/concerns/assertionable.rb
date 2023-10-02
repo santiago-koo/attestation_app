@@ -8,6 +8,10 @@ module Assertionable
       @assertation_service_result ||= assertion_class
     end
 
+    def assertion_validate!
+      raise StandardError, 'Assertion has failed' unless assertation_service_result.success?
+    end
+
     def check_device_params
       params.require(:check_device).permit(:token, :data, :challenge)
     end

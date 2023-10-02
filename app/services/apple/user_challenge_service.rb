@@ -28,6 +28,7 @@ module Apple
     end
 
     def create_new_user_challenge
+      new_user_challenge = UserChallenge.new(new_user_challenge_params)
       return return_message(true, new_user_challenge) if new_user_challenge.save
 
       return_message(false, { msessage: 'Resource not created' })
@@ -35,10 +36,6 @@ module Apple
 
     def deactivate_last_active_user_challenge
       last_active_user_challenge.update(is_active: false) if last_active_user_challenge.present?
-    end
-
-    def new_user_challenge
-      @new_user_challenge ||= UserChallenge.new(new_user_challenge_params)
     end
 
     def new_user_challenge_params
