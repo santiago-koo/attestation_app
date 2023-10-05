@@ -13,6 +13,8 @@ module Android
     end
 
     def call
+      # Because the app is not in the Google Play Store, we have to only verify if the nonce is correct otherwise, the result will be false.
+      # The correct way is replace 'nonce_valid?' with 'veredict_valid?'
       if nonce_valid?
         return_message(true, play_integrity_service_result)
       else

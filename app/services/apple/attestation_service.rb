@@ -15,7 +15,7 @@ module Apple
       return return_message(true, { user_attestation: user_challenge.user_attestation }) if user_already_attested?
 
       if successful_attestation?
-        user.update(is_attested: true)
+        current_user.update(is_attested: true)
         user_challenge.update(is_active: false)
 
         return_message(true, { user_attestation: create_user_attestation })
@@ -27,7 +27,7 @@ module Apple
     private
 
     def user_already_attested?
-      user.is_attested?
+      current_user.is_attested?
     end
 
     def successful_attestation?
@@ -94,6 +94,8 @@ module Apple
       @attestation_object ||= WebAuthn::AttestationObject.deserialize(cbor_data_encoded, relying_party)
     end
 
+    # We have to override attestation payload because the gem only receive the word 'apple' in the 'fmt' property, but the correct word is 'apple-appattest'.
+    # We will extract specific code from the gem and remove unused features in the near future.
     def cbor_data_encoded
       raw_data = ::Base64.decode64(base64_attestation)
 
@@ -102,12 +104,14 @@ module Apple
       ::CBOR.encode(cbor_data_decoded)
     end
 
+    # This is mandatory for the webauthn gem, but it's a useless thing for this purpose.
+    # We will extract specific code from the gem and remove unused features in the near future.
     def relying_party
       WebAuthn::RelyingParty.new(encoding: 'base64', origin: 'localhost:3000', name: 'WebAuthn Rails Demo App')
     end
 
-    def user
-      @user ||= user_challenge.user
+    def current_user
+      @current_user ||= user_challenge.user
     end
 
     def set_user_challenge_type

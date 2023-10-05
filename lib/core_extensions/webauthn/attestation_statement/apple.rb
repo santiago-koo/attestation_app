@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# The webauthn gem uses a different certificate, so this MonkeyPatch will solve some problems with verifying statement certificates..
+# We will extract specific code from the gem and remove unused features in the near future.
 APP_ATTEST_ROOT_CERTIFICATE =
   OpenSSL::X509::Certificate.new(<<~PEM)
     -----BEGIN CERTIFICATE-----

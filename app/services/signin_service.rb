@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class SigninService < ApplicationService
-  class InvalidCredentialsError < StandardError; end
-
   attr_reader :email, :password
 
   def initialize(params)
@@ -11,8 +9,6 @@ class SigninService < ApplicationService
   end
 
   def call
-    raise InvalidCredentialsError if user.blank?
-
     return return_message(false) unless user.authenticate(password)
 
     remove_reset_password_token
