@@ -81,6 +81,4 @@ test:
 #
 production:
   <<: *default
-  database: attestation_app_production
-  username: attestation_app
-  password: <%= ENV["ATTESTATION_APP_DATABASE_PASSWORD"] %>
+  url: <%= ENV["DATABASE_URL"] %>
