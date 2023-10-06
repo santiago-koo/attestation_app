@@ -86,5 +86,6 @@ group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers', '~> 5.3'
+  gem 'timecop', '~> 0.9.8'
   gem 'webdrivers'
 end
